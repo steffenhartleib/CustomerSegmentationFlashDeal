@@ -1,130 +1,151 @@
 ---
 title: "Customer Segmentation and Life Time Value for Flash Deal Site "
 author: "Steffen Hartleib"
+<<<<<<< Updated upstream
 date: "April 25, 2016"
+=======
+date: "January 19, 2017"
+>>>>>>> Stashed changes
 output: html_document
 ---
 
 ### The Data Set
 
-Purchase data from 2010 to 2015
-
-Fields:  
-1. Customer Email  
-2. Purchase Date  
-3. Purchase Amount  
-
+##### Online purchase data from 2010 to 2016
+##### 553087 observations (line items), 19 variables
 
 ### Questions
-1. Which customer segments are driving revenue?  
-2. What is the  average life time value of a customer?
+##### 1. Which customer segments are driving revenue? 
+##### 2. What is the  average life time value of a customer?
 
 ***
 
-### Let's look at year over year trends 
-#####
+### Let's look at year over year revenue and customer trends
 
-```{r, echo = FALSE, eval = TRUE, message=FALSE ,warning = FALSE}
+```{r, echo = FALSE, eval = TRUE,  message=FALSE , warning = FALSE}
 
 # load packages
 library(dplyr)
 library(reshape2)
 library(ggplot2)
 library(knitr)
+library(RMySQL)
 options(scipen=10000)
 
-# read data:
-setwd("~/Google Drive/Analysis/popmarket_clv_2015")
-data = read.csv("data/PopMarketOrders.txt", header = FALSE, stringsAsFactors = FALSE)
-# select revlevant columns
-data_1 = data[,c('V1','V6','V9')]
-# add column names
+# Read data -------------------------------------------------------------------------------------
+
+mydb <-  dbConnect(MySQL(), 
+                   user = Sys.getenv('mysql_user'),
+                   password = Sys.getenv('mysql_pw'),
+                   dbname = Sys.getenv('db_name'),
+                   host = Sys.getenv('db_host'))
+rs <- dbSendQuery(mydb, 'select* from lineItems where store_id in (5693042, 1)')
+d <- fetch(rs, n = -1)
+dbDisconnect(mydb)
+
+
+# Group by order to calcluate Product Revenue (Rev) net of Discounts, which are on an order level
+
+data = group_by(d,Order_ID, Email, Created_at, Discount_Amount)%>%
+               summarize(Prod_Rev = round(sum(Lineitem_quantity * Lineitem_price),2))%>%
+               mutate(Rev = Prod_Rev - Discount_Amount)
+
+# Select columns, format date, add purchase year and recency -------------------- 
+
+data_1 = data[,c('Email','Rev','Created_at')]
 colnames(data_1) = c('email','amount','purchase_date')
-# fix date
 data_1$purchase_date = as.Date(data_1$purchase_date, '%Y-%m-%d')
-# add purchase year colum
 data_1$purchase_year = as.numeric(format(data_1$purchase_date,'%Y'))
-# remove 2016
-data_1 = data_1[which(data_1$purchase_year < 2016),]
-# add recency column
-data_1$days_since = as.numeric(difftime(time1 = '2016-01-01',
+data_1$days_since = as.numeric(difftime(time1 = '2017-02-02',
                                         time2 = data_1$purchase_date,
                                         units ='days'))
-```
 
 
-```{r, echo = FALSE, eval= TRUE,  message=FALSE ,warning = FALSE}
-# summary statistics
+# summary statistics------------------------------------------------------------------------------------
+
 yearly_rev = select(data_1, purchase_year, amount, email)%>%
                 group_by(purchase_year)%>%
                 summarize(rev = round(sum(amount),0),
-                          cust = round(length(unique(email)),0),
+                          cust = n_distinct(email),
                           pur = n(),
                           avg_price = round(mean(amount),0),
                           avg_rev_cust = round(sum(amount)/length(unique(email)),0),
                           avg_no_purch_cust = round(n()/length(unique(email)),2))
 
 ggplot(yearly_rev, aes(purchase_year, rev)) + geom_bar(stat= "identity") + 
-        ggtitle("Revenue is declining\n") + ylab("$ Revenue") + xlab("Year")
+        ggtitle("Yearly Revenue:\n") + ylab("$ Revenue") + xlab("Year")
 
 ggplot(yearly_rev, aes(purchase_year, cust)) + geom_bar(stat= "identity") + 
-        ggtitle("Number of active customers is declining\n") + ylab("No. of active customers") + xlab("Year")
+        ggtitle("Number of Unique Customers:\n") + ylab("No. of active customers") + xlab("Year")
 
-ggplot(yearly_rev, aes(purchase_year, avg_price)) + geom_bar(stat= "identity") + ggtitle("Average purchase price is up slightly\n ") + ylab("Avg. Purchase Price") +  xlab("Year")
+ggplot(yearly_rev, aes(purchase_year, avg_price)) + geom_bar(stat= "identity") + ggtitle("Average Order Value:\n ") + ylab("Avg. Order Value") +  xlab("Year")
 
-ggplot(yearly_rev, aes(purchase_year, avg_rev_cust)) + geom_bar(stat= "identity") + ggtitle("Avgerage revenue per customer is increasing \n") + ylab("Avg. Rev. per customer") + xlab('Year')
+ggplot(yearly_rev, aes(purchase_year, avg_rev_cust)) + geom_bar(stat= "identity") + ggtitle("Average Revenue per Customer:\n") + ylab("Avg. Rev. per customer") + xlab('Year')
 
-ggplot(yearly_rev, aes(purchase_year, avg_no_purch_cust)) + geom_bar(stat= "identity") + ggtitle('Avgerage numnber of purchases per customer is increasing\n') + ylab("Avg. no. purchases per customer")
+ggplot(yearly_rev, aes(purchase_year, avg_no_purch_cust)) + geom_bar(stat= "identity") + ggtitle('Average Number of Orders per Customer:\n') + ylab("Avg. no of orders per customer")
 ```
 
 
-=> Fewer customers are spending slightly more on average, but not enough to reverse the decline of revenue. 
+##### In 2016 the number of customers increased significantly. But Total Revenue rose only slightly. Because, on average, customer placed fewer orders and spent less per order. This is pattern is typical for customer acquistion campaigns driven by discounts. The challenge will be to convert these new customers from bargain shoppers to valuable long term customers.
+##### Let's segement the customers to see what's behind these trends.
+&nbsp;
+
 
 ***
 
-## Segmenting customers  
-For each customer we'll caclulate the following variables:  
+### Simple Customer Segmentation by Recency, Frequency and Monetary Value (RFM) 
+##### We need to calculate three variables per customer:
+##### 1. Recency: Number of days since the last purchase
+##### 2. Frequency:  Number of orders placed, life to date
+##### 3. LTD Revenue: Product Revenue net of discounts life to date
+&nbsp;
+
+#### Here are the summary statistics of each variable: 
+
+
 
 
 ```{r, echo = FALSE , eval = TRUE, message=FALSE, warning = FALSE}
-# group by email for LTD values
-customers_2015 = select(data_1, email, amount, purchase_year,days_since)%>%
-                 group_by(email)%>%
-                 filter(amount > 0)%>%
-                 summarize(avg_amount = mean(amount),
+
+# Group by email for LTD values
+customers_365 = select(data_1, email, amount, purchase_year,days_since)%>%
+                      group_by(email)%>%
+                      filter(amount > 0)%>%
+                      summarize(avg_amount = mean(amount),
                            tl_rev = round(sum(amount),0),
                            recency = min(days_since),
                            first_purchase = max(days_since),
                            frequency = n())
-#dim(customers_2015)
+#View(customers_last_yr)
 
-# get 2015 revenue by customer
-customer_rev_2015 = select(data_1,email,amount,days_since)%>%
-                    filter(days_since <= 365)%>%
-                    group_by(email)%>%
-                    summarize(Rev_2015 = round(sum(amount),0))
+# Get last year's revenue by customer
+customer_rev_365 = select(data_1,email,amount,days_since)%>%
+                        filter(days_since <= 365)%>%
+                        group_by(email)%>%
+                        summarize(Rev_365 = round(sum(amount),0))
 
-customers_2015 = merge(customers_2015,customer_rev_2015, all.x = TRUE, by = 'email')
-customers_2015$Rev_2015[which(is.na(customers_2015$Rev_2015))] = 0
+customers_365 = merge(customers_365 ,customer_rev_365, all.x = TRUE, by = 'email')
 
-means = select(customers_2015, avg_amount, tl_rev, recency, 
-              first_purchase,frequency,Rev_2015)%>%
+customers_365$Rev_365[which(is.na(customers_365$Rev_365))] = 0
+
+means = select(customers_365, avg_amount, tl_rev, recency, 
+              first_purchase,frequency,Rev_365)%>%
               summarize_each(funs(mean))%>%
               summarize_each(funs(round))
       
-mins = select(customers_2015, avg_amount, tl_rev, recency, 
-              first_purchase,frequency,Rev_2015)%>%
+mins = select(customers_365, avg_amount, tl_rev, recency, 
+              first_purchase,frequency,Rev_365)%>%
               summarize_each(funs(min))%>%
               summarize_each(funs(round))
 
-max = select(customers_2015, avg_amount, tl_rev, recency, 
-              first_purchase,frequency,Rev_2015)%>%
+max = select(customers_365, avg_amount, tl_rev, recency, 
+              first_purchase,frequency,Rev_365)%>%
               summarize_each(funs(max))%>%
               summarize_each(funs(round))
 
 
-med = select(customers_2015, avg_amount, tl_rev, recency, 
-              first_purchase,frequency,Rev_2015)%>%
+med = select(customers_365, avg_amount, tl_rev, recency, 
+              first_purchase,frequency,Rev_365)%>%
               summarize_each(funs(median))%>%
               summarize_each(funs(round))
 
@@ -134,16 +155,23 @@ summary = rbind(prettyNum(round(mins),big.mark=","),
                 prettyNum(round(med),big.mark= ","),
                 prettyNum(round(max),big.mark = ","))
 
+
 row.names(summary) = c('Minimum','Average','Median','Max')
 colnames(summary) = c("Avg. Purchase","LTD Revenue","Recency","Days since first purch.", "No of Purchases","Revenue 2015")
-kable(summary)
+
+summary_df <- data.frame(summary)
+
+summary_table <- select(summary_df, Recency, LTD.Revenue, No.of.Purchases)
+kable(summary_table)
 
 ```
 
+##### Look at LTD Revenue! The mean is over three times the median. And one customer spent over $200k. Clearly a few high rolers are pulling up the the average. (A bit like Bill Gates sitting down at your neighborhood bar...)
+&nbsp;
 
 ***
 
-### Let's segment customers on recency and LTD revenue as follows:
+### Let's define our customer segements as follows. I'm using round numbers since this is a managerial analysis.
  
 Segment        | Recency                | LTD Revenue  
 -------------  | ---------------------  | -------------  
@@ -155,6 +183,7 @@ Segment        | Recency                | LTD Revenue
  Inactive Med  | no purchase last year  | >= $100 & < $1000
  Inactive High | no purchase last year  | > $1000
 
+&nbsp;
 
 ***
    
@@ -164,27 +193,27 @@ Segment        | Recency                | LTD Revenue
 
 # 2015 PopMarket Segments
 
-customers_2015$segment = 'NA'
-customers_2015$segment[which(customers_2015$recency > 365*1)] = 'inactive'
-customers_2015$segment[which(customers_2015$recency <= 365*1)] = 'active'
-customers_2015$segment[which(customers_2015$segment == 'active' & customers_2015$first_purchase <= 365)] = 'active new'
-customers_2015$segment[which(customers_2015$segment == 'active' & customers_2015$tl_rev < 100) ] = 'active low'
-customers_2015$segment[which(customers_2015$segment == 'active' & customers_2015$tl_rev >= 100) ] = 'active med'  
-customers_2015$segment[which(customers_2015$segment == 'active med' & customers_2015$tl_rev >= 1000) ] = 'active high'
+customers_365$segment = 'NA'
+customers_365$segment[which(customers_365$recency > 365*1)] = 'inactive'
+customers_365$segment[which(customers_365$recency <= 365*1)] = 'active'
+customers_365$segment[which(customers_365$segment == 'active' & customers_365$first_purchase <= 365)] = 'active new'
+customers_365$segment[which(customers_365$segment == 'active' & customers_365$tl_rev < 100) ] = 'active low'
+customers_365$segment[which(customers_365$segment == 'active' & customers_365$tl_rev >= 100) ] = 'active med'  
+customers_365$segment[which(customers_365$segment == 'active med' & customers_365$tl_rev >= 1000) ] = 'active high'
 
-customers_2015$segment[which(customers_2015$segment == 'inactive' & customers_2015$tl_rev < 100)] = 'inactive low'
-customers_2015$segment[which(customers_2015$segment == 'inactive' & customers_2015$tl_rev >= 100)] = 'inactive med'
-customers_2015$segment[which(customers_2015$segment == 'inactive med' & customers_2015$tl_rev >= 1000)] = 'inactive high'
-customers_2015$segment  = factor(x = customers_2015$segment, levels = c('active new', 'active high','active med', 'active low',
+customers_365$segment[which(customers_365$segment == 'inactive' & customers_365$tl_rev < 100)] = 'inactive low'
+customers_365$segment[which(customers_365$segment == 'inactive' & customers_365$tl_rev >= 100)] = 'inactive med'
+customers_365$segment[which(customers_365$segment == 'inactive med' & customers_365$tl_rev >= 1000)] = 'inactive high'
+customers_365$segment  = factor(x = customers_365$segment, levels = c('active new', 'active high','active med', 'active low',
                                                                         'inactive high', 'inactive med', 'inactive low'))
 
-segments_2015 = select(customers_2015, segment, tl_rev, Rev_2015 )%>%
+segments_365 = select(customers_365, segment, tl_rev, Rev_365 )%>%
                         group_by(segment)%>%
                         summarize(Customers = n(),
-                        PercOfTlCustomers = round(Customers/length(customers_2015$segment),2),
+                        PercOfTlCustomers = round(Customers/length(customers_365$segment),2),
                         RevTD = sum(tl_rev),
-                        Rev2015  = sum(Rev_2015),
-                        PercOfTlRev2015 = round(sum(Rev_2015)/sum(customers_2015$Rev_2015),2))
+                        Rev365  = sum(Rev_365),
+                        PercOfTlRev365 = round(sum(Rev_365)/sum(customers_365$Rev_365),2))
 
                         
                         
@@ -193,12 +222,15 @@ segments_2015 = select(customers_2015, segment, tl_rev, Rev_2015 )%>%
 ```
 ```{r kable, eval=TRUE, echo=FALSE}
 library(knitr)
-kable(segments_2015, col.names = c('Segments','Customers','Perc of Cust','Rev. LTD','Rev 2015','Perc Tl Rev 2015'))
+kable(segments_365, col.names = c('Segments','Customers','Perc of Cust','Rev. LTD','Rev 2016','Perc Tl Rev 2016'))
 ```
+
+##### How neat, a perfect 80/20: In 2016 80% of revenue came from exactly 20% of customers (New Active +  Active High). 52% of revenue came from just 6% of customers (Active High + Active Medium). And 32% of revenue came from the top 2% of customers (Active High).  This site has some seriously loyal high rollers. Great!
+
 
 ```{r, echo = FALSE,eval=TRUE, message=FALSE ,warning = FALSE}
 
-customers_2014 = select(data_1, email, amount, purchase_year,days_since)%>%
+customers_2x_365 = select(data_1, email, amount, purchase_year,days_since)%>%
         filter(days_since  > 365)%>%  # remove all purchases made mode in the last year 
         group_by(email)%>%
         summarize(avg_amount = mean(amount),
@@ -207,45 +239,45 @@ customers_2014 = select(data_1, email, amount, purchase_year,days_since)%>%
                   first_purchase = max(days_since),
                   frequency = n())
 
-customers_rev_2014 = select(data_1,email,amount,days_since)%>%
-                    filter(days_since > 365 & days_since <= 356*2)%>%
-                    group_by(email)%>%
-                    summarize(Rev_2014 = sum(amount))
+customers_rev_2x_365 = select(data_1,email,amount,days_since)%>%
+                       filter(days_since > 365 & days_since <= 356*2)%>%
+                       group_by(email)%>%
+                       summarize(Rev_2x_365 = sum(amount))
 
-customers_2014 = merge(customers_2014,customers_rev_2014, all.x = TRUE, by = 'email')
+customers_2x_365 = merge(customers_2x_365,customers_rev_2x_365, all.x = TRUE, by = 'email')
 
-customers_2014$Rev_2014[which(is.na(customers_2014$Rev_2014))] = 0
+customers_2x_365$Rev_2x_365[which(is.na(customers_2x_365$Rev_2x_365))] = 0
 
 
-# segment 2014 data
-customers_2014$segment = 'NA'
-customers_2014$segment[which(customers_2014$recency > 365*2)] = 'inactive'
-customers_2014$segment[which(customers_2014$recency <= 365*2)] = 'active'
+# segment 2x_365 data
+customers_2x_365$segment = 'NA'
+customers_2x_365$segment[which(customers_2x_365$recency > 365*2)] = 'inactive'
+customers_2x_365$segment[which(customers_2x_365$recency <= 365*2)] = 'active'
 
-customers_2014$segment[which(customers_2014$segment == 'active' & customers_2014$first_purchase <= 365*2)] = 'active new'
-customers_2014$segment[which(customers_2014$segment == 'active' & customers_2014$tl_rev < 100) ] = 'active low'
-customers_2014$segment[which(customers_2014$segment == 'active' & customers_2014$tl_rev >= 100) ] = 'active med'  ####
-customers_2014$segment[which(customers_2014$segment == 'active med' & customers_2014$tl_rev >= 1000) ] = 'active high'
+customers_2x_365$segment[which(customers_2x_365$segment == 'active' & customers_2x_365$first_purchase <= 365*2)] = 'active new'
+customers_2x_365$segment[which(customers_2x_365$segment == 'active' & customers_2x_365$tl_rev < 100) ] = 'active low'
+customers_2x_365$segment[which(customers_2x_365$segment == 'active' & customers_2x_365$tl_rev >= 100) ] = 'active med'  ####
+customers_2x_365$segment[which(customers_2x_365$segment == 'active med' & customers_2x_365$tl_rev >= 1000) ] = 'active high'
 
-customers_2014$segment[which(customers_2014$segment == 'inactive' & customers_2014$tl_rev < 100)] = 'inactive low'
-customers_2014$segment[which(customers_2014$segment == 'inactive' & customers_2014$tl_rev >= 100)] = 'inactive med'
-customers_2014$segment[which(customers_2014$segment == 'inactive med' & customers_2014$tl_rev >= 1000)] = 'inactive high'
+customers_2x_365$segment[which(customers_2x_365$segment == 'inactive' & customers_2x_365$tl_rev < 100)] = 'inactive low'
+customers_2x_365$segment[which(customers_2x_365$segment == 'inactive' & customers_2x_365$tl_rev >= 100)] = 'inactive med'
+customers_2x_365$segment[which(customers_2x_365$segment == 'inactive med' & customers_2x_365$tl_rev >= 1000)] = 'inactive high'
 
-customers_2014$segment  = factor(x = customers_2014$segment, levels = c('active new', 'active high','active med', 'active low',
+customers_2x_365$segment  = factor(x = customers_2x_365$segment, levels = c('active new', 'active high','active med', 'active low',
                                                                         'inactive high', 'inactive med', 'inactive low'))
 
-segments_2014 = select(customers_2014, segment, tl_rev,Rev_2014)%>%
+segments_2x_365 = select(customers_2x_365, segment, tl_rev,Rev_2x_365)%>%
         group_by(segment)%>%
         summarize(Customers = n(),
-                  PercOfTotal = round(Customers/length(customers_2014$segment),2),
+                  PercOfTotal = round(Customers/length(customers_2x_365$segment),2),
                   Rev = sum(tl_rev),
-                  Rev_2014 = sum(Rev_2014),
-                  PercOfTlRev2014 = round(Rev_2014/sum(customers_2014$Rev_2014),2)
+                  Rev_2x_365 = sum(Rev_2x_365),
+                  PercOfTlRev2x_365 = round(Rev_2x_365/sum(customers_2x_365$Rev_2x_365),2)
                   )
 
 # 2013 Customer Segments i.e. excluding all purchases made up until a year ago (then same analysis as above)
 
-customers_2013 = select(data_1, email, amount, purchase_year,days_since)%>%
+customers_3x_365 = select(data_1, email, amount, purchase_year,days_since)%>%
         filter(days_since  > 365*2)%>%  # remove all purchases made mode in the last 2 years
         group_by(email)%>%
         summarize(avg_amount = mean(amount),
@@ -254,112 +286,110 @@ customers_2013 = select(data_1, email, amount, purchase_year,days_since)%>%
                   first_purchase = max(days_since),
                   frequency = n())
 
-customer_rev_2013 = select(data_1,email,amount,days_since)%>%
+customer_rev_3x_365 = select(data_1,email,amount,days_since)%>%
                     filter(days_since > 365*2 & days_since <= 356*3)%>%
                     group_by(email)%>%
-                    summarize(Rev_2013 = sum(amount))
+                    summarize(Rev_3x_365 = sum(amount))
 
-customers_2013 = merge(customers_2013,customer_rev_2013, all.x = TRUE, by = 'email')
-customers_2013$Rev_2013[which(is.na(customers_2013$Rev_2013))] = 0
+customers_3x_365 = merge(customers_3x_365,customer_rev_3x_365, all.x = TRUE, by = 'email')
+customers_3x_365$Rev_3x_365[which(is.na(customers_3x_365$Rev_3x_365))] = 0
 
-# segment 2013 data
-customers_2013$segment = 'NA'
-customers_2013$segment[which(customers_2013$recency > 365*3)] = 'inactive'
-customers_2013$segment[which(customers_2013$recency <= 365*3)] = 'active'
-#table(customers_2013$segment)
+# segment 3x_365 data
+customers_3x_365$segment = 'NA'
+customers_3x_365$segment[which(customers_3x_365$recency > 365*3)] = 'inactive'
+customers_3x_365$segment[which(customers_3x_365$recency <= 365*3)] = 'active'
+#table(customers_3x_365$segment)
 
-customers_2013$segment[which(customers_2013$segment == 'active' & customers_2013$first_purchase < 365*3)] = 'active new'
-customers_2013$segment[which(customers_2013$segment == 'active' & customers_2013$tl_rev < 100) ] = 'active low'
-customers_2013$segment[which(customers_2013$segment == 'active' & customers_2013$tl_rev >= 100) ] = 'active med'  ####
-customers_2013$segment[which(customers_2013$segment == 'active med' & customers_2013$tl_rev >= 1000) ] = 'active high'
+customers_3x_365$segment[which(customers_3x_365$segment == 'active' & customers_3x_365$first_purchase < 365*3)] = 'active new'
+customers_3x_365$segment[which(customers_3x_365$segment == 'active' & customers_3x_365$tl_rev < 100) ] = 'active low'
+customers_3x_365$segment[which(customers_3x_365$segment == 'active' & customers_3x_365$tl_rev >= 100) ] = 'active med'  ####
+customers_3x_365$segment[which(customers_3x_365$segment == 'active med' & customers_3x_365$tl_rev >= 1000) ] = 'active high'
 
-customers_2013$segment[which(customers_2013$segment == 'inactive' & customers_2013$tl_rev < 100)] = 'inactive low'
-customers_2013$segment[which(customers_2013$segment == 'inactive' & customers_2013$tl_rev >= 100)] = 'inactive med'
-customers_2013$segment[which(customers_2013$segment == 'inactive med' & customers_2013$tl_rev >= 1000)] = 'inactive high'
+customers_3x_365$segment[which(customers_3x_365$segment == 'inactive' & customers_3x_365$tl_rev < 100)] = 'inactive low'
+customers_3x_365$segment[which(customers_3x_365$segment == 'inactive' & customers_3x_365$tl_rev >= 100)] = 'inactive med'
+customers_3x_365$segment[which(customers_3x_365$segment == 'inactive med' & customers_3x_365$tl_rev >= 1000)] = 'inactive high'
 
-customers_2013$segment  = factor(x = customers_2013$segment, levels = c('active new', 'active high','active med', 'active low',
+customers_3x_365$segment  = factor(x = customers_3x_365$segment, levels = c('active new', 'active high','active med', 'active low',
                                                                         'inactive high', 'inactive med', 'inactive low'))
 
-segments_2013 = select(customers_2013, segment, tl_rev,Rev_2013)%>%
+segments_3x_365 = select(customers_3x_365, segment, tl_rev,Rev_3x_365)%>%
         group_by(segment)%>%
         summarize(Customers = n(),
-                  PercOfTlCust = round(Customers/length(customers_2013$segment),2),
+                  PercOfTlCust = round(Customers/length(customers_3x_365$segment),2),
                   Rev = sum(tl_rev),
-                  Rev_2013 = sum(Rev_2013),
-                  PercOfTlRev2013 = round(Rev_2013/sum(customers_2013$Rev_2013),2)
+                  Rev_3x_365 = sum(Rev_3x_365),
+                  PercOfTlRev3x_365 = round(Rev_3x_365/sum(customers_3x_365$Rev_3x_365),2)
                   )
 ```
+&nbsp;
 
 ***
 
 ### Here is how the customer segments changed over time:
 
 ```{r,echo=FALSE, eval=TRUE, message=FALSE,warning=FALSE}
-segments_year = cbind(segments_2013,segments_2014,segments_2015)
-segments_year = cbind(segments_2013,segments_2014[,2:6],segments_2015[,2:6])
+segments_year = cbind(segments_3x_365,segments_2x_365,segments_365)
+segments_year = cbind(segments_3x_365,segments_2x_365[,2:6],segments_365[,2:6])
 
 ```
 
 ```{r,echo=FALSE, eval=TRUE,message=FALSE,warning=FALSE}
 # make table to compare no of customers per segments per year
 segments_customers = segments_year[,c(1,2,7,12)]
-colnames(segments_customers) = c('Segments','2013','2014','2015')
+colnames(segments_customers) = c('Segments','2014','2015','2016')
 #segments_customers 
 segments_customers_long = melt(segments_customers, value.name  = 'Customers')
 colnames(segments_customers_long) <- c('Segment','Year','No_of_Customers')
 
 # plot no of customers per segment per year
 plot_seg = ggplot(segments_customers_long,aes(Year, No_of_Customers))
-plot_seg + geom_point() + facet_grid(.~ Segment) + ggtitle("Number of customers per segmnet\n over the last three years\n") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ylab("Number of customers\n")
+plot_seg + geom_point() + facet_grid(.~ Segment) + ggtitle("Number of customers per segmnet over the last three years\n") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ylab("Number of customers\n")
 ```
 
-=> New Active customers declined by over 50% 2 years in a row
-=> Active Medium customer are declining as well, but at a slower rate  
-=> Active High customer have slightly increased
+##### Active New customers more than doubled last year. Active High/Med/Low segments stayed almost flat. So customer acquisition efforts are paying off and customer retention is working. The challenge will be to retain these new active customers, and to convert them to higher priced offers.
+&nbsp;
 
 
 ### Here is how revenue per segment stacks up, over time:
 ```{r,echo=FALSE, eval=TRUE,message=FALSE,warning=FALSE}
 # make table to compare yearly REVENUE per segments per year
 segments_rev = segments_year[,c(1,5,10,15)]
-colnames(segments_rev) = c('Segments','2013','2014','2015')
+colnames(segments_rev) = c('Segments','2014','2015','2016')
 segments_rev_long = melt(segments_rev, value.name  = 'Customers')
 colnames(segments_rev_long) <- c('Segment','Year','Revenue')
+```
 
 
-#### => As expected yearly revenue per segment declined at about the same rate as the nunber of customers in each segment.
 
 ```{r,echo=FALSE, eval=TRUE,message=FALSE,warning=FALSE}
+
 plot_seg_rev = ggplot(segments_rev_long, aes(Year, Revenue,fill = Segment)) +  geom_bar(stat = 'identity') + ggtitle('Revenue by Customer Segment\n')
 plot_seg_rev + ylab("Revenue\n") + xlab("Year\n")
 ```
 
+##### New Active customers drove the increase in revenue. 
 
 ```{r,echo=FALSE, eval=TRUE,message=FALSE,warning=FALSE}
 # make table to compare perc of yearly revenue by segment
 segments_rev_perc = segments_year[c(1,6,11,16)]
-colnames(segments_rev_perc) = c('Segment','2013','2014','2015')
+colnames(segments_rev_perc) = c('Segment','2014','2015','2016')
 seg_rev_perc_long = melt(segments_rev_perc,value.name = 'Perc_of_Yearly_Rev')
 colnames(seg_rev_perc_long) <- c('Segment','Year','Rev_Perc')
 ```
-The decline in revenue is driven by the decline in active new customers.
-Revenue from repeat customers is slightly increasing, but not enough to reverse the downward trend 
-
-```{r,echo=FALSE, eval=TRUE,message=FALSE,warning=FALSE}
-# plot perc of yearly revenue by segment  - bar chart
-#plot_seg_rev_perc = ggplot(seg_rev_perc_long, aes(Year, Rev_Perc,fill = Segment)) +  geom_bar(stat = 'identity') 
-#plot_seg_rev_perc + ggtitle('Revenue per segment\n as perc. of total\n') +
-#ylab('Revenue as perc. of total')
-```
  
 
-=> We have a customer acquistion and a customer retention problem  
-
-=> Let's calculate Customer Life Time value, so that we know how much we can spend on customer acquistion, while maintaining a positive return on investment (ROI).
+```{r,echo=FALSE, eval=TRUE,message=FALSE,warning=FALSE}
+#plot perc of yearly revenue by segment  - bar chart
+#plot_seg_rev_perc = ggplot(seg_rev_perc_long, aes(Year, Rev_Perc,fill = Segment)) +  geom_bar(stat #= 'identity') 
+#plot_seg_rev_perc + ggtitle('Revenue per segment\n (As Percentage of Total)\n') +
+#ylab('Revenue as perc. of total')
+```
+# &nbsp;
 
 ***
 
-## Customer Life Time Value
+## What's the value of the current data base? 
+##### This isn't the same as Customer Life Time Value (CLV). CLV tells us how much a customer spends on average in her lifetime. That's very usefull to determine how much can we spend to acquire a new customer. Here we're asking how much more revenue can we expect from the customers in the data base. 
 
 
 ```{r,echo=FALSE, eval=TRUE,message=FALSE,warning=FALSE}
@@ -378,47 +408,48 @@ Revenue from repeat customers is slightly increasing, but not enough to reverse 
 
 ***
 
-### Transition Matrix 
-Shows the probabilities of customers changing segments between 2014 and 2015
+###  Let's make a Transition Matrix
+##### It shows the probabilities of customers changing segments between 2015 and 2016, e.g. how many "Active High" customers in 2015 were also Active High customers in 2016? etc. (the answer is 67%, not bad!)
 
 ```{r,echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE}
-new_data = merge(x = customers_2014, y = customers_2015, by = 'email', all.x = TRUE)
-
+new_data = merge(x = customers_2x_365, y = customers_365, by = 'email', all.x = TRUE)
 transition = table(new_data$segment.x, new_data$segment.y)
 transition =  round(transition / rowSums(transition),2)
 kable(transition)
 ```
 ***
+&nbsp;
 
-### Let's take a closer look at what happens to 'New Active' customers (first row of transition matrix)
+### Let's quickly visualize where last year's New Active customers ended up: 
 
 ```{r,echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE}
 trans = data.frame(transition)
 new_active_trans = trans[which(trans$Var1 == 'active new'),]
 new_active_trans = mutate(new_active_trans[-1,],perc = Freq/sum(Freq))
 ggplot(new_active_trans, aes(Var2, perc)) + geom_bar(stat ='identity') + 
-        ggtitle('New active customers in 2014\n moved to the following segments in
-                2015\n') + ylab('Percentage of total "New Active" customers\n') +
+        ggtitle("New Active Customers in 2015 transitioned to the following segments in 2016:") + ylab('Percentage of total "New Active" customers\n') +
         xlab('Segments')
 
 ```
 
-=> 80% of New Active customers dont' come back the next year
+#### 22% of New Active customers are still Active the next year. Most of them are in the Active Medium segment. Curious to see what next year will look like...
+&nbsp;
 
 ***
 
-### Forecast the number of customers in each segment over the next 5 years
+### How do we forecast the size of each segment over the next 5 years?
 
-We assume that customers will transition from segment to segment in the same proportions as they did from 2014 to 2015. We can therefore multiply each period's segments by the transition matrix to forecast the number of customer per segment in the next period.
+##### Let's assume customers will continue to transition from segment to segment in the same proportions as the did from 2015 to 2016. That way we can mulitply this year's segments by the transition matrix to predict next year's segments. Then we'll multiply next year's (forecasted) segments by the same transition matrix to the get the following year. And so on.
+&nbsp;
 
 
 ```{r,echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE}
 # initialize a matrix with the number of customers in each segment today and after 10 periods
 
 segments = matrix(nrow = 7, ncol = 6)
-segments[,1] = table(customers_2015$segment)
-colnames(segments) = 2015:2020
-rownames(segments) = levels(customers_2015$segment)
+segments[,1] = table(customers_365$segment)
+colnames(segments) = 2016:2021
+rownames(segments) = levels(customers_365$segment)
 #dim(segments)
 #segments[,1]
 
@@ -436,26 +467,26 @@ round(segments)
 
 ***
 
-### Forecast revenue per segment for the next 5 years
-(assuming that on average revenue per segment stays the same over time)
+### Now we can forecast revenue per segment for the next 5 years
+#####(assuming that, on average, revenue per segment stays the same)
 
 ```{r,echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE}
 
 # average rev per customer in each segment in 2015
 
-rev_2015_segment = select(customers_2015, Rev_2015, segment)%>%
+rev_2016_segment = select(customers_365, Rev_365, segment)%>%
                    group_by(segment)%>%
-                   summarize(avg_rev = round(mean(Rev_2015),0))
+                   summarize(avg_rev = round(mean(Rev_365),0))
 
 #print(rev_2015_segment)
 
-yearly_revenue = rev_2015_segment$avg_rev
+yearly_revenue = rev_2016_segment$avg_rev
 revenue_per_segment = round(yearly_revenue * segments,0)
 #revenue_per_segment
 ```
+&nbsp;
 
 ***
-
 
 ```{r,echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE}
 #Compute yearly revenue
@@ -487,7 +518,7 @@ ggplot(cume_rev, aes(Year, cumulative_revenue)) + geom_bar(stat = 'identity') + 
 ```{r,echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE}
 #create discount factor
 discount_rate = .1
-discount = 1 / (1 + discount_rate) ^ ((1:7)-1)
+discount = 1 / (1 + discount_rate) ^ ((1:5)-1)
 #discount
 ```
 
@@ -511,20 +542,25 @@ colnames(disc_cume_rev) = c("Cume_Rev", "Year")
 ggplot(disc_cume_rev, aes(Year, Cume_Rev)) + geom_bar(stat = 'identity') + ggtitle('Present Value of Cumulative Revenue\n Discounted at 10%\n') + ylab("Cumulative Revenue")
 ```
 
-Total present value of the data base is:
+#### Total net present value of the data base in 2020 is:
 ```{r,echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE}
 # what is the data base worth?
-cust_value = print(disc_cumulative_revenue[6] - disc_cumulative_revenue[1])
+cust_value = disc_cumulative_revenue[6] - disc_cumulative_revenue[1]
 cust_value = prettyNum(cust_value, big.mark = ",")
+cust_value_1 = as.data.frame(cust_value, row.names = 'Net Present Value')
+names(cust_value_1) = c("2020")
+kable(cust_value_1)
+
 
 ```
-### Customer Life  Time Value
+
+### And let's add the Customer Life Time Value
 ```{r,echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE}
 # Customer Life Time value
-LTV = prettyNum((disc_cumulative_revenue[6] - disc_cumulative_revenue[1])/dim(customers_2015)[1],big.mark = ",", digits = 4)
+LTV = prettyNum((disc_cumulative_revenue[6] - disc_cumulative_revenue[1])/dim(customers_365)[1],big.mark = ",", digits = 4)
 
 value_table = data.frame(LTV, cust_value)
-colnames(value_table) = c("Customer Life Time Value", "Total Present Value of Data Base")
+colnames(value_table) = c("Customer Life Time Value", "Total Net Present Value of Data Base")
 kable(value_table)
 ```
 
