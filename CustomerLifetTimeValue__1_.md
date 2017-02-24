@@ -76,6 +76,7 @@ Segment        | Recency                | LTD Revenue
 
 
 
+
 Segments         Customers   Perc of Cust   Rev. LTD   Rev 2016   Perc Tl Rev 2016
 --------------  ----------  -------------  ---------  ---------  -----------------
 active new           18621           0.18    1410602    1410602               0.48
