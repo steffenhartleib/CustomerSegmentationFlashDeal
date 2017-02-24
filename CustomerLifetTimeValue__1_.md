@@ -77,15 +77,15 @@ Segment        | Recency                | LTD Revenue
 
 
 
-Segments         Customers   Perc of Cust   Rev. LTD   Rev 2016   Perc Tl Rev 2016
---------------  ----------  -------------  ---------  ---------  -----------------
-active new           18621           0.18    1410602    1410602               0.48
-active high           1719           0.02    5432010     950284               0.32
-active med            4420           0.04    1813677     576158               0.20
-active low             538           0.01      38624      16103               0.01
-inactive high         2008           0.02    4770592          0               0.00
-inactive med         29617           0.28    7817822          0               0.00
-inactive low         48892           0.46    2371343          0               0.00
+segment          Customers   PercOfTlCustomers     RevTD    Rev365   PercOfTlRev365
+--------------  ----------  ------------------  --------  --------  ---------------
+active new           18621                0.18   1410602   1410602             0.48
+active high           1719                0.02   5432010    950284             0.32
+active med            4420                0.04   1813677    576158             0.20
+active low             538                0.01     38624     16103             0.01
+inactive high         2008                0.02   4770592         0             0.00
+inactive med         29617                0.28   7817822         0             0.00
+inactive low         48892                0.46   2371343         0             0.00
 
 ##### How neat, a perfect 80/20: In 2016 80% of revenue came from exactly 20% of customers (New Active +  Active High). 52% of revenue came from just 6% of customers (Active High + Active Medium). And 32% of revenue came from the top 2% of customers (Active High).  This site has some seriously loyal high rollers. Great!
 
