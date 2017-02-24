@@ -77,15 +77,15 @@ Segment        | Recency                | LTD Revenue
 
 
 
-segment          Customers   PercOfTlCustomers     RevTD    Rev365   PercOfTlRev365
---------------  ----------  ------------------  --------  --------  ---------------
-active new           18621                0.18   1410602   1410602             0.48
-active high           1719                0.02   5432010    950284             0.32
-active med            4420                0.04   1813677    576158             0.20
-active low             538                0.01     38624     16103             0.01
-inactive high         2008                0.02   4770592         0             0.00
-inactive med         29617                0.28   7817822         0             0.00
-inactive low         48892                0.46   2371343         0             0.00
+|segment       | Customers| PercOfTlCustomers|   RevTD|  Rev365| PercOfTlRev365|
+|:-------------|---------:|-----------------:|-------:|-------:|--------------:|
+|active new    |     18621|              0.18| 1410602| 1410602|           0.48|
+|active high   |      1719|              0.02| 5432010|  950284|           0.32|
+|active med    |      4420|              0.04| 1813677|  576158|           0.20|
+|active low    |       538|              0.01|   38624|   16103|           0.01|
+|inactive high |      2008|              0.02| 4770592|       0|           0.00|
+|inactive med  |     29617|              0.28| 7817822|       0|           0.00|
+|inactive low  |     48892|              0.46| 2371343|       0|           0.00|
 
 ##### How neat, a perfect 80/20: In 2016 80% of revenue came from exactly 20% of customers (New Active +  Active High). 52% of revenue came from just 6% of customers (Active High + Active Medium). And 32% of revenue came from the top 2% of customers (Active High).  This site has some seriously loyal high rollers. Great!
 
@@ -134,15 +134,15 @@ inactive low         48892                0.46   2371343         0             0
 ##### It shows the probabilities of customers changing segments between 2015 and 2016, e.g. how many "Active High" customers in 2015 were also Active High customers in 2016? etc. (the answer is 67%, not bad!)
 
 
-                 active new   active high   active med   active low   inactive high   inactive med   inactive low
---------------  -----------  ------------  -----------  -----------  --------------  -------------  -------------
-active new                0          0.02         0.16         0.04            0.00           0.24           0.54
-active high               0          0.67         0.00         0.00            0.33           0.00           0.00
-active med                0          0.06         0.34         0.00            0.00           0.60           0.00
-active low                0          0.00         0.19         0.06            0.00           0.00           0.75
-inactive high             0          0.09         0.00         0.00            0.91           0.00           0.00
-inactive med              0          0.00         0.04         0.00            0.00           0.95           0.00
-inactive low              0          0.00         0.01         0.01            0.00           0.00           0.98
+|              | active new| active high| active med| active low| inactive high| inactive med| inactive low|
+|:-------------|----------:|-----------:|----------:|----------:|-------------:|------------:|------------:|
+|active new    |          0|        0.02|       0.16|       0.04|          0.00|         0.24|         0.54|
+|active high   |          0|        0.67|       0.00|       0.00|          0.33|         0.00|         0.00|
+|active med    |          0|        0.06|       0.34|       0.00|          0.00|         0.60|         0.00|
+|active low    |          0|        0.00|       0.19|       0.06|          0.00|         0.00|         0.75|
+|inactive high |          0|        0.09|       0.00|       0.00|          0.91|         0.00|         0.00|
+|inactive med  |          0|        0.00|       0.04|       0.00|          0.00|         0.95|         0.00|
+|inactive low  |          0|        0.00|       0.01|       0.01|          0.00|         0.00|         0.98|
 ***
 &nbsp;
 
@@ -199,15 +199,15 @@ inactive low              0          0.00         0.01         0.01            0
 
 #### Total net present value of the data base in 2020 is:
 
-                    2020      
-------------------  ----------
-Net Present Value   6,593,739 
+|                  |2020      |
+|:-----------------|:---------|
+|Net Present Value |6,593,739 |
 
 ### And let's add the Customer Life Time Value
 
-       Customer Life Time Value   Total Net Present Value of Data Base 
------  -------------------------  -------------------------------------
-2021   62.31                      6,593,739                            
+|     |Customer Life Time Value |Total Net Present Value of Data Base |
+|:----|:------------------------|:------------------------------------|
+|2021 |62.31                    |6,593,739                            |
 
 
 

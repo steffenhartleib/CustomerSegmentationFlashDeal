@@ -236,7 +236,15 @@ $(document).ready(function () {
 </div>
 <div id="summary-of-the-segments" class="section level3">
 <h3>Summary of the segments:</h3>
-<table>
+<table style="width:110%;">
+<colgroup>
+<col width="20%"></col>
+<col width="15%"></col>
+<col width="26%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
+<col width="22%"></col>
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">segment</th>
@@ -340,112 +348,7 @@ $(document).ready(function () {
 <h3>Let’s make a Transition Matrix</h3>
 <div id="it-shows-the-probabilities-of-customers-changing-segments-between-2015-and-2016-e.g.how-many-active-high-customers-in-2015-were-also-active-high-customers-in-2016-etc.-the-answer-is-67-not-bad" class="section level5">
 <h5>It shows the probabilities of customers changing segments between 2015 and 2016, e.g. how many “Active High” customers in 2015 were also Active High customers in 2016? etc. (the answer is 67%, not bad!)</h5>
-<table>
-<thead>
-<tr class="header">
-<th align="left"></th>
-<th align="right">active new</th>
-<th align="right">active high</th>
-<th align="right">active med</th>
-<th align="right">active low</th>
-<th align="right">inactive high</th>
-<th align="right">inactive med</th>
-<th align="right">inactive low</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">active new</td>
-<td align="right">0</td>
-<td align="right">0.02</td>
-<td align="right">0.16</td>
-<td align="right">0.04</td>
-<td align="right">0.00</td>
-<td align="right">0.24</td>
-<td align="right">0.54</td>
-</tr>
-<tr class="even">
-<td align="left">active high</td>
-<td align="right">0</td>
-<td align="right">0.67</td>
-<td align="right">0.00</td>
-<td align="right">0.00</td>
-<td align="right">0.33</td>
-<td align="right">0.00</td>
-<td align="right">0.00</td>
-</tr>
-<tr class="odd">
-<td align="left">active med</td>
-<td align="right">0</td>
-<td align="right">0.06</td>
-<td align="right">0.34</td>
-<td align="right">0.00</td>
-<td align="right">0.00</td>
-<td align="right">0.60</td>
-<td align="right">0.00</td>
-</tr>
-<tr class="even">
-<td align="left">active low</td>
-<td align="right">0</td>
-<td align="right">0.00</td>
-<td align="right">0.19</td>
-<td align="right">0.06</td>
-<td align="right">0.00</td>
-<td align="right">0.00</td>
-<td align="right">0.75</td>
-</tr>
-<tr class="odd">
-<td align="left">inactive high</td>
-<td align="right">0</td>
-<td align="right">0.09</td>
-<td align="right">0.00</td>
-<td align="right">0.00</td>
-<td align="right">0.91</td>
-<td align="right">0.00</td>
-<td align="right">0.00</td>
-</tr>
-<tr class="even">
-<td align="left">inactive med</td>
-<td align="right">0</td>
-<td align="right">0.00</td>
-<td align="right">0.04</td>
-<td align="right">0.00</td>
-<td align="right">0.00</td>
-<td align="right">0.95</td>
-<td align="right">0.00</td>
-</tr>
-<tr class="odd">
-<td align="left">inactive low</td>
-<td align="right">0</td>
-<td align="right">0.00</td>
-<td align="right">0.01</td>
-<td align="right">0.01</td>
-<td align="right">0.00</td>
-<td align="right">0.00</td>
-<td align="right">0.98</td>
-</tr>
-<tr class="even">
-<td align="left">***</td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-</tr>
-<tr class="odd">
-<td align="left"> </td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-</tr>
-</tbody>
-</table>
+<p>| | active new| active high| active med| active low| inactive high| inactive med| inactive low| |:————-|———-:|———–:|———-:|———-:|————-:|————:|————:| |active new | 0| 0.02| 0.16| 0.04| 0.00| 0.24| 0.54| |active high | 0| 0.67| 0.00| 0.00| 0.33| 0.00| 0.00| |active med | 0| 0.06| 0.34| 0.00| 0.00| 0.60| 0.00| |active low | 0| 0.00| 0.19| 0.06| 0.00| 0.00| 0.75| |inactive high | 0| 0.09| 0.00| 0.00| 0.91| 0.00| 0.00| |inactive med | 0| 0.00| 0.04| 0.00| 0.00| 0.95| 0.00| |inactive low | 0| 0.00| 0.01| 0.01| 0.00| 0.00| 0.98| ***  </p>
 </div>
 </div>
 <div id="lets-quickly-visualize-where-last-years-new-active-customers-ended-up" class="section level3">

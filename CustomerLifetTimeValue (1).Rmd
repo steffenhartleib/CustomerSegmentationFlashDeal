@@ -3,9 +3,9 @@ title: 'Customer Segmentation and Life Time Value for Flash Deal Site '
 author: "Steffen Hartleib"
 date: '`r format(Sys.Date())`'
 output:
-  pdf_document: default
   html_document:
     keep_md: yes
+  pdf_document: default
 ---
 
 ### The Data Set
@@ -30,6 +30,7 @@ library(ggplot2)
 library(knitr)
 library(RMySQL)
 options(scipen=10000)
+options(knitr.table.format = 'markdown')
 
 # Read data -------------------------------------------------------------------------------------
 
