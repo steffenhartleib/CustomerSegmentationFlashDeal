@@ -171,14 +171,42 @@ $(document).ready(function () {
 </div>
 <div id="here-are-the-summary-statistics-of-each-variable" class="section level4">
 <h4>Here are the summary statistics of each variable:</h4>
-<pre><code>## 
-## 
-##           Recency   LTD.Revenue   No.of.Purchases 
-## --------  --------  ------------  ----------------
-## Minimum   0         1             1               
-## Average   1,042     224           3               
-## Median    1,115     70            1               
-## Max       2,292     222,182       2,863</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Recency</th>
+<th align="left">LTD.Revenue</th>
+<th align="left">No.of.Purchases</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Minimum</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">Average</td>
+<td align="left">1,042</td>
+<td align="left">224</td>
+<td align="left">3</td>
+</tr>
+<tr class="odd">
+<td align="left">Median</td>
+<td align="left">1,115</td>
+<td align="left">70</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">Max</td>
+<td align="left">2,292</td>
+<td align="left">222,182</td>
+<td align="left">2,863</td>
+</tr>
+</tbody>
+</table>
 <div id="look-at-ltd-revenue-the-mean-is-over-three-times-the-median.-and-one-customer-spent-over-200k.-clearly-a-few-high-rolers-are-pulling-up-the-the-average.-a-bit-like-bill-gates-sitting-down-at-your-neighborhood-bar" class="section level5">
 <h5>=&gt; Look at LTD Revenue! The mean is over three times the median. And one customer spent over $200k. Clearly a few high rolers are pulling up the the average. (A bit like Bill Gates sitting down at your neighborhood bar…)</h5>
 <p> </p>
@@ -238,7 +266,15 @@ $(document).ready(function () {
 </div>
 <div id="summary-of-the-segments" class="section level3">
 <h3>Summary of the segments:</h3>
-<table>
+<table style="width:110%;">
+<colgroup>
+<col width="20%"></col>
+<col width="15%"></col>
+<col width="26%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
+<col width="22%"></col>
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">segment</th>
@@ -342,19 +378,7 @@ $(document).ready(function () {
 <h3>Let’s make a Transition Matrix</h3>
 <div id="it-shows-the-probabilities-of-customers-changing-segments-between-2015-and-2016-e.g.how-many-active-high-customers-in-2015-were-also-active-high-customers-in-2016-etc.-the-answer-is-67-not-bad" class="section level5">
 <h5>It shows the probabilities of customers changing segments between 2015 and 2016, e.g. how many “Active High” customers in 2015 were also Active High customers in 2016? etc. (the answer is 67%, not bad!)</h5>
-<pre><code>## 
-## 
-##                  active new   active high   active med   active low   inactive high   inactive med   inactive low
-## --------------  -----------  ------------  -----------  -----------  --------------  -------------  -------------
-## active new                0          0.02         0.16         0.04            0.00           0.24           0.54
-## active high               0          0.67         0.00         0.00            0.33           0.00           0.00
-## active med                0          0.06         0.34         0.00            0.00           0.60           0.00
-## active low                0          0.00         0.19         0.06            0.00           0.00           0.75
-## inactive high             0          0.09         0.00         0.00            0.91           0.00           0.00
-## inactive med              0          0.00         0.04         0.00            0.00           0.95           0.00
-## inactive low              0          0.00         0.01         0.01            0.00           0.00           0.98</code></pre>
-<hr />
-<p> </p>
+<p>| | active new| active high| active med| active low| inactive high| inactive med| inactive low| |:————-|———-:|———–:|———-:|———-:|————-:|————:|————:| |active new | 0| 0.02| 0.16| 0.04| 0.00| 0.24| 0.54| |active high | 0| 0.67| 0.00| 0.00| 0.33| 0.00| 0.00| |active med | 0| 0.06| 0.34| 0.00| 0.00| 0.60| 0.00| |active low | 0| 0.00| 0.19| 0.06| 0.00| 0.00| 0.75| |inactive high | 0| 0.09| 0.00| 0.00| 0.91| 0.00| 0.00| |inactive med | 0| 0.00| 0.04| 0.00| 0.00| 0.95| 0.00| |inactive low | 0| 0.00| 0.01| 0.01| 0.00| 0.00| 0.98| ***  </p>
 </div>
 </div>
 <div id="lets-quickly-visualize-where-last-years-new-active-customers-ended-up" class="section level3">
@@ -371,14 +395,17 @@ $(document).ready(function () {
 <div id="lets-assume-customers-will-continue-to-transition-from-segment-to-segment-in-the-same-proportions-as-the-did-from-2015-to-2016.-that-way-we-can-mulitply-this-years-segments-by-the-transition-matrix-to-predict-next-years-segments.-then-well-multiply-next-years-forecasted-segments-by-the-same-transition-matrix-to-the-get-the-following-year.-and-so-on." class="section level5">
 <h5>Let’s assume customers will continue to transition from segment to segment in the same proportions as the did from 2015 to 2016. That way we can mulitply this year’s segments by the transition matrix to predict next year’s segments. Then we’ll multiply next year’s (forecasted) segments by the same transition matrix to the get the following year. And so on.</h5>
 <p> </p>
-<pre><code>##                2016  2017  2018  2019  2020  2021
-## active new    18621     0     0     0     0     0
-## active high    1719  1970  1911  1797  1713  1671
-## active med     4420  6258  4362  3680  3464  3395
-## active low      538  1266   660   621   612   605
-## inactive high  2008  2395  2829  3205  3510  3759
-## inactive med  29617 35257 37249 38004 38312 38475
-## inactive low  48892 58373 58155 57487 56803 56126</code></pre>
+<pre><code>## 
+## 
+## |              |  2016|     2017|       2018|       2019|       2020|       2021|
+## |:-------------|-----:|--------:|----------:|----------:|----------:|----------:|
+## |active new    | 18621|     0.00|     0.0000|     0.0000|     0.0000|     0.0000|
+## |active high   |  1719|  1970.07|  1910.9352|  1796.6880|  1713.0461|  1671.4594|
+## |active med    |  4420|  6257.98|  4362.2784|  3680.0317|  3464.2545|  3394.6546|
+## |active low    |   538|  1266.04|   659.6924|   621.1322|   612.1353|   604.7566|
+## |inactive high |  2008|  2394.55|  2829.1636|  3205.1475|  3509.5913|  3759.0333|
+## |inactive med  | 29617| 35257.19| 37249.1185| 38004.0296| 38311.8471| 38474.8074|
+## |inactive low  | 48892| 58373.00| 58155.0700| 57486.7379| 56802.8523| 56125.8968|</code></pre>
 <hr />
 </div>
 </div>
@@ -398,9 +425,9 @@ $(document).ready(function () {
 <h4>Total net present value of the data base in 2020 is:</h4>
 <pre><code>## 
 ## 
-##                     X2020     
-## ------------------  ----------
-## Net Present Value   6,593,739</code></pre>
+## |                  |X2020     |
+## |:-----------------|:---------|
+## |Net Present Value |6,593,739 |</code></pre>
 </div>
 </div>
 <div id="and-lets-add-the-customer-life-time-value" class="section level3">
@@ -425,9 +452,9 @@ $(document).ready(function () {
 ## Net Present Value 6,593,739</code></pre>
 <pre><code>## 
 ## 
-##                     X2020     
-## ------------------  ----------
-## Net Present Value   6,593,739</code></pre>
+## |                  |X2020     |
+## |:-----------------|:---------|
+## |Net Present Value |6,593,739 |</code></pre>
 </div>
 </div>
 </div>

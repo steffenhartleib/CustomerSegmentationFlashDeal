@@ -20,7 +20,7 @@ Steffen Hartleib
 ## [1] TRUE
 ```
 
-![](CustomerLifetTimeValue__1__files/figure-html/unnamed-chunk-1-1.png)<!-- -->![](CustomerLifetTimeValue__1__files/figure-html/unnamed-chunk-1-2.png)<!-- -->![](CustomerLifetTimeValue__1__files/figure-html/unnamed-chunk-1-3.png)<!-- -->![](CustomerLifetTimeValue__1__files/figure-html/unnamed-chunk-1-4.png)<!-- -->![](CustomerLifetTimeValue__1__files/figure-html/unnamed-chunk-1-5.png)<!-- -->
+![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-1-1.png)<!-- -->![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-1-2.png)<!-- -->![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-1-3.png)<!-- -->![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-1-4.png)<!-- -->![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-1-5.png)<!-- -->
 
 
 ##### =>  In 2016 the number of customers increased significantly. But Total Revenue rose only slightly. Because, on average, customer placed fewer orders and spent less per order. This is pattern is typical for customer acquistion campaigns driven by discounts. The challenge will be to convert these new customers from bargain shoppers to valuable long term customers.
@@ -41,18 +41,12 @@ Steffen Hartleib
 
 
 
-
-
-```
-## 
-## 
-##           Recency   LTD.Revenue   No.of.Purchases 
-## --------  --------  ------------  ----------------
-## Minimum   0         1             1               
-## Average   1,042     224           3               
-## Median    1,115     70            1               
-## Max       2,292     222,182       2,863
-```
+|        |Recency |LTD.Revenue |No.of.Purchases |
+|:-------|:-------|:-----------|:---------------|
+|Minimum |0       |1           |1               |
+|Average |1,042   |224         |3               |
+|Median  |1,115   |70          |1               |
+|Max     |2,292   |222,182     |2,863           |
 
 ##### => Look at LTD Revenue! The mean is over three times the median. And one customer spent over $200k. Clearly a few high rolers are pulling up the the average. (A bit like Bill Gates sitting down at your neighborhood bar...)
 &nbsp;
@@ -80,15 +74,15 @@ Segment        | Recency                | LTD Revenue
 
 
 
-segment          Customers   PercOfTlCustomers     RevTD    Rev365   PercOfTlRev365
---------------  ----------  ------------------  --------  --------  ---------------
-active new           18621                0.18   1410602   1410602             0.48
-active high           1719                0.02   5432010    950284             0.32
-active med            4420                0.04   1813677    576158             0.20
-active low             538                0.01     38624     16103             0.01
-inactive high         2008                0.02   4770592         0             0.00
-inactive med         29617                0.28   7817822         0             0.00
-inactive low         48892                0.46   2371343         0             0.00
+|segment       | Customers| PercOfTlCustomers|   RevTD|  Rev365| PercOfTlRev365|
+|:-------------|---------:|-----------------:|-------:|-------:|--------------:|
+|active new    |     18621|              0.18| 1410602| 1410602|           0.48|
+|active high   |      1719|              0.02| 5432010|  950284|           0.32|
+|active med    |      4420|              0.04| 1813677|  576158|           0.20|
+|active low    |       538|              0.01|   38624|   16103|           0.01|
+|inactive high |      2008|              0.02| 4770592|       0|           0.00|
+|inactive med  |     29617|              0.28| 7817822|       0|           0.00|
+|inactive low  |     48892|              0.46| 2371343|       0|           0.00|
 
 ##### How neat, a perfect 80/20 ratio: In 2016 80% of revenue came from exactly 20% of customers (New Active +  Active High). 52% of revenue came from just 6% of customers (Active High + Active Medium). And 32% of revenue came from the top 2% of customers (Active High).  This site has some seriously loyal high rollers. Great!
 
@@ -102,7 +96,7 @@ inactive low         48892                0.46   2371343         0             0
 
 
 
-![](CustomerLifetTimeValue__1__files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 ##### Active New customers more than doubled last year. Active High/Med/Low segments stayed almost flat. So customer acquisition efforts are paying off and customer retention is working. The challenge will be to retain these new active customers, and to convert them to higher priced offers.
 &nbsp;
@@ -113,7 +107,7 @@ inactive low         48892                0.46   2371343         0             0
 
 
 
-![](CustomerLifetTimeValue__1__files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
 ##### New Active customers drove the increase in revenue. 
 
@@ -137,25 +131,21 @@ inactive low         48892                0.46   2371343         0             0
 ##### It shows the probabilities of customers changing segments between 2015 and 2016, e.g. how many "Active High" customers in 2015 were also Active High customers in 2016? etc. (the answer is 67%, not bad!)
 
 
-```
-## 
-## 
-##                  active new   active high   active med   active low   inactive high   inactive med   inactive low
-## --------------  -----------  ------------  -----------  -----------  --------------  -------------  -------------
-## active new                0          0.02         0.16         0.04            0.00           0.24           0.54
-## active high               0          0.67         0.00         0.00            0.33           0.00           0.00
-## active med                0          0.06         0.34         0.00            0.00           0.60           0.00
-## active low                0          0.00         0.19         0.06            0.00           0.00           0.75
-## inactive high             0          0.09         0.00         0.00            0.91           0.00           0.00
-## inactive med              0          0.00         0.04         0.00            0.00           0.95           0.00
-## inactive low              0          0.00         0.01         0.01            0.00           0.00           0.98
-```
+|              | active new| active high| active med| active low| inactive high| inactive med| inactive low|
+|:-------------|----------:|-----------:|----------:|----------:|-------------:|------------:|------------:|
+|active new    |          0|        0.02|       0.16|       0.04|          0.00|         0.24|         0.54|
+|active high   |          0|        0.67|       0.00|       0.00|          0.33|         0.00|         0.00|
+|active med    |          0|        0.06|       0.34|       0.00|          0.00|         0.60|         0.00|
+|active low    |          0|        0.00|       0.19|       0.06|          0.00|         0.00|         0.75|
+|inactive high |          0|        0.09|       0.00|       0.00|          0.91|         0.00|         0.00|
+|inactive med  |          0|        0.00|       0.04|       0.00|          0.00|         0.95|         0.00|
+|inactive low  |          0|        0.00|       0.01|       0.01|          0.00|         0.00|         0.98|
 ***
 &nbsp;
 
 ### Let's quickly visualize where last year's New Active customers ended up: 
 
-![](CustomerLifetTimeValue__1__files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
 
 #### 22% of New Active customers are still Active the next year. Most of them are in the Active Medium segment. Curious to see what next year will look like...
 &nbsp;
@@ -170,14 +160,17 @@ inactive low         48892                0.46   2371343         0             0
 
 
 ```
-##                2016  2017  2018  2019  2020  2021
-## active new    18621     0     0     0     0     0
-## active high    1719  1970  1911  1797  1713  1671
-## active med     4420  6258  4362  3680  3464  3395
-## active low      538  1266   660   621   612   605
-## inactive high  2008  2395  2829  3205  3510  3759
-## inactive med  29617 35257 37249 38004 38312 38475
-## inactive low  48892 58373 58155 57487 56803 56126
+## 
+## 
+## |              |  2016|     2017|       2018|       2019|       2020|       2021|
+## |:-------------|-----:|--------:|----------:|----------:|----------:|----------:|
+## |active new    | 18621|     0.00|     0.0000|     0.0000|     0.0000|     0.0000|
+## |active high   |  1719|  1970.07|  1910.9352|  1796.6880|  1713.0461|  1671.4594|
+## |active med    |  4420|  6257.98|  4362.2784|  3680.0317|  3464.2545|  3394.6546|
+## |active low    |   538|  1266.04|   659.6924|   621.1322|   612.1353|   604.7566|
+## |inactive high |  2008|  2394.55|  2829.1636|  3205.1475|  3509.5913|  3759.0333|
+## |inactive med  | 29617| 35257.19| 37249.1185| 38004.0296| 38311.8471| 38474.8074|
+## |inactive low  | 48892| 58373.00| 58155.0700| 57486.7379| 56802.8523| 56125.8968|
 ```
 
 ***
@@ -190,11 +183,11 @@ inactive low         48892                0.46   2371343         0             0
 
 ***
 
-![](CustomerLifetTimeValue__1__files/figure-html/unnamed-chunk-16-1.png)<!-- -->
+![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
 
 ***
 
-![](CustomerLifetTimeValue__1__files/figure-html/unnamed-chunk-17-1.png)<!-- -->
+![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
 
 ***
 
@@ -202,23 +195,23 @@ inactive low         48892                0.46   2371343         0             0
 
 
 
-![](CustomerLifetTimeValue__1__files/figure-html/unnamed-chunk-20-1.png)<!-- -->
+![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
 
 #### Total net present value of the data base in 2020 is:
 
 ```
 ## 
 ## 
-##                     X2020     
-## ------------------  ----------
-## Net Present Value   6,593,739
+## |                  |X2020     |
+## |:-----------------|:---------|
+## |Net Present Value |6,593,739 |
 ```
 
 ### And let's add the Customer Life Time Value
 
-       Customer Life Time Value   Total Net Present Value of Data Base 
------  -------------------------  -------------------------------------
-2021   62.31                      6,593,739                            
+|     |Customer Life Time Value |Total Net Present Value of Data Base |
+|:----|:------------------------|:------------------------------------|
+|2021 |62.31                    |6,593,739                            |
 
 ```
 ##                        2020
@@ -228,9 +221,9 @@ inactive low         48892                0.46   2371343         0             0
 ```
 ## 
 ## 
-##                     X2020     
-## ------------------  ----------
-## Net Present Value   6,593,739
+## |                  |X2020     |
+## |:-----------------|:---------|
+## |Net Present Value |6,593,739 |
 ```
 
 

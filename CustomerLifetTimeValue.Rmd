@@ -5,7 +5,6 @@ date: '`sysdate()`'
 output:
   html_document:
     keep_md: yes
-  pdf_document: default
 ---
 
 ### The Data Set
@@ -30,6 +29,7 @@ library(ggplot2)
 library(knitr)
 library(RMySQL)
 options(scipen=10000)
+options(knitr.table.format = 'markdown')
 
 
 # Read data -------------------------------------------------------------------------------------
@@ -103,10 +103,8 @@ ggplot(yearly_rev, aes(purchase_year, avg_no_purch_cust)) + geom_bar(stat= "iden
 #### Here are the summary statistics of each variable: 
 
 
-
-
 ```{r, echo = FALSE , eval = TRUE, message=FALSE, warning = FALSE}
-
+#library(knitr)
 # Group by email for LTD values
 customers_365 = select(data_1, email, amount, purchase_year,days_since)%>%
                       group_by(email)%>%
@@ -163,7 +161,7 @@ summary_df <- data.frame(summary)
 
 summary_table <- select(summary_df, Recency, LTD.Revenue, No.of.Purchases)
 
-print(kable(data.frame(summary_table)))
+kable(data.frame(summary_table))
 
 ```
 
@@ -413,12 +411,12 @@ colnames(seg_rev_perc_long) <- c('Segment','Year','Rev_Perc')
 ###  Let's make a Transition Matrix
 ##### It shows the probabilities of customers changing segments between 2015 and 2016, e.g. how many "Active High" customers in 2015 were also Active High customers in 2016? etc. (the answer is 67%, not bad!)
 
-```{r kable, eval=TRUE, echo=FALSE, results= "asis"}
-
+```{r  eval=TRUE, echo=FALSE, results= "asis"}
+library(knitr)
 new_data = merge(x = customers_2x_365, y = customers_365, by = 'email', all.x = TRUE)
 transition = table(new_data$segment.x, new_data$segment.y)
 transition =  round(transition / rowSums(transition),2)
-kable(transition)
+print(kable(transition))
 ```
 ***
 &nbsp;
@@ -447,6 +445,7 @@ ggplot(new_active_trans, aes(Var2, perc)) + geom_bar(stat ='identity') +
 
 
 ```{r,echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE}
+library(knitr)
 # initialize a matrix with the number of customers in each segment today and after 10 periods
 
 segments = matrix(nrow = 7, ncol = 6)
@@ -465,7 +464,8 @@ for (i in 2:6) {
 
 segments[,2] = segments[,1] %*% transition
 #segments[,1]%*% transition
-round(segments)
+segmentes = round(segments)
+print(kable(segments))
 ```
 
 ***
@@ -558,6 +558,7 @@ print(kable(data.frame(cust_value_1)))
 
 ### And let's add the Customer Life Time Value
 ```{r,echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE}
+library(knitr)
 # Customer Life Time value
 LTV = prettyNum((disc_cumulative_revenue[6] - disc_cumulative_revenue[1])/dim(customers_365)[1],big.mark = ",", digits = 4)
 

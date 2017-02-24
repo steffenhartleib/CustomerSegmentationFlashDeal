@@ -413,8 +413,7 @@ colnames(seg_rev_perc_long) <- c('Segment','Year','Rev_Perc')
 ###  Let's make a Transition Matrix
 ##### It shows the probabilities of customers changing segments between 2015 and 2016, e.g. how many "Active High" customers in 2015 were also Active High customers in 2016? etc. (the answer is 67%, not bad!)
 
-```{r kable, eval=TRUE, echo=FALSE, results= "asis"}
-
+```{r,echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE}
 new_data = merge(x = customers_2x_365, y = customers_365, by = 'email', all.x = TRUE)
 transition = table(new_data$segment.x, new_data$segment.y)
 transition =  round(transition / rowSums(transition),2)
