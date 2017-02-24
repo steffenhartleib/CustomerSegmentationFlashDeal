@@ -11,6 +11,7 @@ output:
 
 
 ```{r kable}
+options(knitr.table.format = 'markdown')
 n <- 100
 x <- rnorm(n)
 y <- 2*x + rnorm(n)

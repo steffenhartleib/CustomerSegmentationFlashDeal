@@ -123,7 +123,8 @@ $(document).ready(function () {
 </div>
 
 
-<pre class="r"><code>n &lt;- 100
+<pre class="r"><code>options(knitr.table.format = 'markdown')
+n &lt;- 100
 x &lt;- rnorm(n)
 y &lt;- 2*x + rnorm(n)
 out &lt;- lm(y ~ x)
@@ -142,16 +143,16 @@ kable(summary(out)$coef, digits=2)</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">-0.02</td>
+<td align="right">-0.17</td>
 <td align="right">0.09</td>
-<td align="right">-0.25</td>
-<td align="right">0.81</td>
+<td align="right">-1.77</td>
+<td align="right">0.08</td>
 </tr>
 <tr class="even">
 <td align="left">x</td>
-<td align="right">2.03</td>
+<td align="right">1.84</td>
 <td align="right">0.09</td>
-<td align="right">22.41</td>
+<td align="right">19.47</td>
 <td align="right">0.00</td>
 </tr>
 </tbody>
