@@ -1,6 +1,6 @@
 # Customer Segmentation and Life Time Value for Flash Deal Site 
 Steffen Hartleib  
-January 19, 2017  
+`r format(Sys.Date())`  
 
 ### The Data Set
 
@@ -43,12 +43,13 @@ January 19, 2017
 
 
 
-          Recency   LTD.Revenue   No.of.Purchases 
---------  --------  ------------  ----------------
-Minimum   0         1             1               
-Average   1,042     224           3               
-Median    1,115     70            1               
-Max       2,292     222,182       2,863           
+```
+##         Recency LTD.Revenue No.of.Purchases
+## Minimum       0           1               1
+## Average   1,042         224               3
+## Median    1,115          70               1
+## Max       2,292     222,182           2,863
+```
 
 ##### Look at LTD Revenue! The mean is over three times the median. And one customer spent over $200k. Clearly a few high rolers are pulling up the the average. (A bit like Bill Gates sitting down at your neighborhood bar...)
 &nbsp;

@@ -160,7 +160,7 @@ colnames(summary) = c("Avg. Purchase","LTD Revenue","Recency","Days since first 
 summary_df <- data.frame(summary)
 
 summary_table <- select(summary_df, Recency, LTD.Revenue, No.of.Purchases)
-kable(summary_table)
+summary_table
 
 ```
 
