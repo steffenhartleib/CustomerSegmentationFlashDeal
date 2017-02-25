@@ -131,7 +131,13 @@ Segment        | Recency                | LTD Revenue
 ##### It shows the probabilities of customers changing segments between 2015 and 2016, e.g. how many "Active High" customers in 2015 were also Active High customers in 2016? etc. (the answer is 67%, not bad!)
 
 
-|              | active new| active high| active med| active low| inactive high| inactive med| inactive low|
+```
+## Using Freq as value column: use value.var to override.
+```
+
+
+
+|Var1          | active new| active high| active med| active low| inactive high| inactive med| inactive low|
 |:-------------|----------:|-----------:|----------:|----------:|-------------:|------------:|------------:|
 |active new    |          0|        0.02|       0.16|       0.04|          0.00|         0.24|         0.54|
 |active high   |          0|        0.67|       0.00|       0.00|          0.33|         0.00|         0.00|
@@ -140,7 +146,8 @@ Segment        | Recency                | LTD Revenue
 |inactive high |          0|        0.09|       0.00|       0.00|          0.91|         0.00|         0.00|
 |inactive med  |          0|        0.00|       0.04|       0.00|          0.00|         0.95|         0.00|
 |inactive low  |          0|        0.00|       0.01|       0.01|          0.00|         0.00|         0.98|
-[1] "table"
+
+[1] "data.frame"
 ***
 &nbsp;
 
@@ -205,18 +212,18 @@ Segment        | Recency                | LTD Revenue
 ## 
 ## |                  |X2020     |
 ## |:-----------------|:---------|
-## |Net Present Value |6,593,739 |
+## |Net Present Value |6,069,183 |
 ```
 
 ### And let's add the Customer Life Time Value
 
 |     |Customer Life Time Value |Total Net Present Value of Data Base |
 |:----|:------------------------|:------------------------------------|
-|2021 |62.31                    |6,593,739                            |
+|2021 |57.36                    |6,069,183                            |
 
 ```
 ##                        2020
-## Net Present Value 6,593,739
+## Net Present Value 6,069,183
 ```
 
 ```
@@ -224,7 +231,7 @@ Segment        | Recency                | LTD Revenue
 ## 
 ## |                  |X2020     |
 ## |:-----------------|:---------|
-## |Net Present Value |6,593,739 |
+## |Net Present Value |6,069,183 |
 ```
 
 

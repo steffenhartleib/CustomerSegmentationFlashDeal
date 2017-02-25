@@ -5,6 +5,7 @@ date: '`sysdate()`'
 output:
   html_document:
     keep_md: yes
+  pdf_document: default
 ---
 
 ### The Data Set
@@ -214,7 +215,7 @@ segments_365 = select(customers_365, segment, tl_rev, Rev_365 )%>%
                         Rev365  = sum(Rev_365),
                         PercOfTlRev365 = round(sum(Rev_365)/sum(customers_365$Rev_365),2))
 
-                        
+                     
                         
 #print(segments_2015[,1:3])
 
@@ -411,12 +412,15 @@ colnames(seg_rev_perc_long) <- c('Segment','Year','Rev_Perc')
 ###  Let's make a Transition Matrix
 ##### It shows the probabilities of customers changing segments between 2015 and 2016, e.g. how many "Active High" customers in 2015 were also Active High customers in 2016? etc. (the answer is 67%, not bad!)
 
-```{r  eval=TRUE, echo=FALSE, results= "asis"}
+```{r  eval=TRUE, echo=FALSE, message=FALSE, results= "asis"}
+
 new_data = merge(x = customers_2x_365, y = customers_365, by = 'email', all.x = TRUE)
 transition = table(new_data$segment.x, new_data$segment.y)
 transition =  round(transition / rowSums(transition),2)
-print(kable(transition))
-class(transition)
+
+transition_table <- data.frame(transition)%>%
+                    dcast(Var1 ~ Var2)
+kable(transition_table)
 ```
 ***
 &nbsp;
@@ -424,6 +428,7 @@ class(transition)
 ### Let's quickly visualize where last year's New Active customers ended up: 
 
 ```{r,echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE}
+
 trans = data.frame(transition)
 new_active_trans = trans[which(trans$Var1 == 'active new'),]
 new_active_trans = mutate(new_active_trans[-1,],perc = Freq/sum(Freq))
@@ -521,7 +526,7 @@ ggplot(cume_rev, aes(Year, cumulative_revenue)) + geom_bar(stat = 'identity') + 
 ```{r,echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE}
 #create discount factor
 discount_rate = .1
-discount = 1 / (1 + discount_rate) ^ ((1:5)-1)
+discount = 1 / (1 + discount_rate) ^ ((1:6)-1)
 #discount
 ```
 
