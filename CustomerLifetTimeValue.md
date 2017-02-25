@@ -140,6 +140,7 @@ Segment        | Recency                | LTD Revenue
 |inactive high |          0|        0.09|       0.00|       0.00|          0.91|         0.00|         0.00|
 |inactive med  |          0|        0.00|       0.04|       0.00|          0.00|         0.95|         0.00|
 |inactive low  |          0|        0.00|       0.01|       0.01|          0.00|         0.00|         0.98|
+[1] "table"
 ***
 &nbsp;
 
