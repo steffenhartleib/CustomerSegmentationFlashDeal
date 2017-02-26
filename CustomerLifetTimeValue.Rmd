@@ -1,7 +1,7 @@
 ---
 title: 'Customer Segmentation and Life Time Value for Flash Deal Site '
 author: "Steffen Hartleib"
-date: '`sysdate()`'
+date: '2017-02-22'
 output:
   html_document:
     keep_md: yes
@@ -11,17 +11,17 @@ output:
 ### The Data Set
 
 ##### Online purchase data from 2010 to 2016
-##### 553087 observations (line items), 19 variables
+##### 553,087 observations (line items), 19 variables
 
 ### Questions
 ##### 1. Which customer segments are driving revenue? 
-##### 2. What is the  average life time value of a customer?
+##### 2. What is the value of the customer data base?
 
 ***
 
 ### Let's look at year over year revenue and customer trends
 
-```{r, echo = FALSE, eval = TRUE,  message=FALSE , warning = FALSE}
+```{r, echo = FALSE, eval = TRUE,  message = FALSE , warning = FALSE}
 
 # load packages
 library(dplyr)
@@ -105,7 +105,7 @@ ggplot(yearly_rev, aes(purchase_year, avg_no_purch_cust)) + geom_bar(stat= "iden
 
 
 ```{r, echo = FALSE , eval = TRUE, message=FALSE, warning = FALSE}
-#library(knitr)
+
 # Group by email for LTD values
 customers_365 = select(data_1, email, amount, purchase_year,days_since)%>%
                       group_by(email)%>%
@@ -115,7 +115,7 @@ customers_365 = select(data_1, email, amount, purchase_year,days_since)%>%
                            recency = min(days_since),
                            first_purchase = max(days_since),
                            frequency = n())
-#View(customers_last_yr)
+
 
 # Get last year's revenue by customer
 customer_rev_365 = select(data_1,email,amount,days_since)%>%
@@ -226,7 +226,7 @@ library(knitr)
 print(kable(data.frame(segments_365)))
 ```
 
-##### How neat, a perfect 80/20 ratio: In 2016 80% of revenue came from exactly 20% of customers (New Active +  Active High). 52% of revenue came from just 6% of customers (Active High + Active Medium). And 32% of revenue came from the top 2% of customers (Active High).  This site has some seriously loyal high rollers. Great!
+##### => A perfect 80/20: In 2016 80% of revenue came from exactly 20% of customers (New Active +  Active High). 52% of revenue came from just 6% of customers (Active High + Active Medium). And 32% of revenue came from the top 2% of customers (Active High).  This site has some seriously loyal high rollers. Great!
 
 
 ```{r, echo = FALSE,eval=TRUE, message=FALSE ,warning = FALSE}
@@ -347,7 +347,7 @@ plot_seg = ggplot(segments_customers_long,aes(Year, No_of_Customers))
 plot_seg + geom_point() + facet_grid(.~ Segment) + ggtitle("Number of customers per segmnet over the last three years\n") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ylab("Number of customers\n")
 ```
 
-##### Active New customers more than doubled last year. Active High/Med/Low segments stayed almost flat. So customer acquisition efforts are paying off and customer retention is working. The challenge will be to retain these new active customers, and to convert them to higher priced offers.
+##### => Active New customers more than doubled last year. Active High/Med/Low segments stayed almost flat. So customer acquisition efforts are paying off and customer retention is working. The challenge will be to retain these new active customers, and to convert them to higher priced offers.
 &nbsp;
 
 
@@ -422,6 +422,7 @@ transition_table <- data.frame(transition)%>%
                     dcast(Var1 ~ Var2)
 kable(transition_table)
 ```
+
 ***
 &nbsp;
 
@@ -438,39 +439,40 @@ ggplot(new_active_trans, aes(Var2, perc)) + geom_bar(stat ='identity') +
 
 ```
 
-#### 22% of New Active customers are still Active the next year. Most of them are in the Active Medium segment. Curious to see what next year will look like...
+##### => 22% of New Active customers are still Active the next year. Most of them are in the Active Medium segment. Curious to see what next year will look like...
 &nbsp;
 
 ***
 
 ### How do we forecast the size of each segment over the next 5 years?
 
-##### Let's assume customers will continue to transition from segment to segment in the same proportions as the did from 2015 to 2016. That way we can mulitply this year's segments by the transition matrix to predict next year's segments. Then we'll multiply next year's (forecasted) segments by the same transition matrix to the get the following year. And so on.
+##### Let's assume customers will continue to transition from segment to segment in the same proportions as from 2015 to 2016. That way we can mulitply this year's segments by the transition matrix to predict next year's segments. Then we'll multiply next year's (forecasted) segments by the same transition matrix to the get the following year. And so on.
 &nbsp;
 
 
 ```{r,echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE}
-library(knitr)
-# initialize a matrix with the number of customers in each segment today and after 10 periods
 
-segments = matrix(nrow = 7, ncol = 6)
+
+# initialize a matrix with the number of customers in each segment today and after 10 years
+
+segments = matrix(nrow = 7, ncol = 11)
 segments[,1] = table(customers_365$segment)
-colnames(segments) = 2016:2021
+colnames(segments) = 2016:2026
 rownames(segments) = levels(customers_365$segment)
-#dim(segments)
-#segments[,1]
 
 
-# compute for every period
-
-for (i in 2:6) {
-        segments[,i] =  segments[,i-1] %*% transition
+# multiply this matrix by the tranistion matrix to get customers per secgement in the next 10 years 
+for (i in 2:11) {
+        segments[,i] =  round(segments[,i-1] %*% transition)
 }
 
-segments[,2] = segments[,1] %*% transition
-#segments[,1]%*% transition
-segmentes = round(segments)
-print(kable(segments))
+
+segments_tbl <- data.frame(segments)
+
+names(segments_tbl) = c(2016:2026)
+
+kable(segments_tbl)
+  
 ```
 
 ***
@@ -480,7 +482,7 @@ print(kable(segments))
 
 ```{r,echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE}
 
-# average rev per customer in each segment in 2015
+# average rev per customer in each segment in 2016
 
 rev_2016_segment = select(customers_365, Rev_365, segment)%>%
                    group_by(segment)%>%
@@ -550,28 +552,25 @@ colnames(disc_cume_rev) = c("Cume_Rev", "Year")
 ggplot(disc_cume_rev, aes(Year, Cume_Rev)) + geom_bar(stat = 'identity') + ggtitle('Present Value of Cumulative Revenue\n Discounted at 10%\n') + ylab("Cumulative Revenue")
 ```
 
-#### Total net present value of the data base in 2020 is:
+#### Total net present value of the data base in 2026 is:
 ```{r,echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE}
+
 # what is the data base worth?
-cust_value = disc_cumulative_revenue[6] - disc_cumulative_revenue[1]
+### get revenue in the next 10 years:
+cust_value = disc_cumulative_revenue[11] - disc_cumulative_revenue[1]
+#### format numbers:
 cust_value = prettyNum(cust_value, big.mark = ",")
 cust_value_1 = as.data.frame(cust_value, row.names = 'Net Present Value')
-names(cust_value_1) = c("2020")
-print(kable(data.frame(cust_value_1)))
+names(cust_value_1[1,]) = c("2026")
 
-```
+# per customer:
+LTV = prettyNum(round((disc_cumulative_revenue[11] - disc_cumulative_revenue[1])/dim(customers_365)[1],2),big.mark = ",", digits = 4)
 
-### And let's add the Customer Life Time Value
-```{r,echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE}
-library(knitr)
-# Customer Life Time value
-LTV = prettyNum((disc_cumulative_revenue[6] - disc_cumulative_revenue[1])/dim(customers_365)[1],big.mark = ",", digits = 4)
-
-value_table = data.frame(LTV, cust_value)
-colnames(value_table) = c("Customer Life Time Value", "Total Net Present Value of Data Base")
+value_table = data.frame(cust_value, LTV, row.names = NULL)
+colnames(value_table) = c("Total Data Base","Per Customer") 
 kable(value_table)
-cust_value_1
-print(kable(data.frame(cust_value_1)))
+
+
 ```
 
 

@@ -1,15 +1,15 @@
 # Customer Segmentation and Life Time Value for Flash Deal Site 
 Steffen Hartleib  
-`sysdate()`  
+2017-02-22  
 
 ### The Data Set
 
 ##### Online purchase data from 2010 to 2016
-##### 553087 observations (line items), 19 variables
+##### 553,087 observations (line items), 19 variables
 
 ### Questions
 ##### 1. Which customer segments are driving revenue? 
-##### 2. What is the  average life time value of a customer?
+##### 2. What is the value of the customer data base?
 
 ***
 
@@ -84,7 +84,7 @@ Segment        | Recency                | LTD Revenue
 |inactive med  |     29617|              0.28| 7817822|       0|           0.00|
 |inactive low  |     48892|              0.46| 2371343|       0|           0.00|
 
-##### How neat, a perfect 80/20 ratio: In 2016 80% of revenue came from exactly 20% of customers (New Active +  Active High). 52% of revenue came from just 6% of customers (Active High + Active Medium). And 32% of revenue came from the top 2% of customers (Active High).  This site has some seriously loyal high rollers. Great!
+##### => A perfect 80/20: In 2016 80% of revenue came from exactly 20% of customers (New Active +  Active High). 52% of revenue came from just 6% of customers (Active High + Active Medium). And 32% of revenue came from the top 2% of customers (Active High).  This site has some seriously loyal high rollers. Great!
 
 
 
@@ -98,7 +98,7 @@ Segment        | Recency                | LTD Revenue
 
 ![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
-##### Active New customers more than doubled last year. Active High/Med/Low segments stayed almost flat. So customer acquisition efforts are paying off and customer retention is working. The challenge will be to retain these new active customers, and to convert them to higher priced offers.
+##### => Active New customers more than doubled last year. Active High/Med/Low segments stayed almost flat. So customer acquisition efforts are paying off and customer retention is working. The challenge will be to retain these new active customers, and to convert them to higher priced offers.
 &nbsp;
 
 
@@ -131,12 +131,6 @@ Segment        | Recency                | LTD Revenue
 ##### It shows the probabilities of customers changing segments between 2015 and 2016, e.g. how many "Active High" customers in 2015 were also Active High customers in 2016? etc. (the answer is 67%, not bad!)
 
 
-```
-## Using Freq as value column: use value.var to override.
-```
-
-
-
 |Var1          | active new| active high| active med| active low| inactive high| inactive med| inactive low|
 |:-------------|----------:|-----------:|----------:|----------:|-------------:|------------:|------------:|
 |active new    |          0|        0.02|       0.16|       0.04|          0.00|         0.24|         0.54|
@@ -147,7 +141,6 @@ Segment        | Recency                | LTD Revenue
 |inactive med  |          0|        0.00|       0.04|       0.00|          0.00|         0.95|         0.00|
 |inactive low  |          0|        0.00|       0.01|       0.01|          0.00|         0.00|         0.98|
 
-[1] "data.frame"
 ***
 &nbsp;
 
@@ -155,31 +148,27 @@ Segment        | Recency                | LTD Revenue
 
 ![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
 
-#### 22% of New Active customers are still Active the next year. Most of them are in the Active Medium segment. Curious to see what next year will look like...
+##### => 22% of New Active customers are still Active the next year. Most of them are in the Active Medium segment. Curious to see what next year will look like...
 &nbsp;
 
 ***
 
 ### How do we forecast the size of each segment over the next 5 years?
 
-##### Let's assume customers will continue to transition from segment to segment in the same proportions as the did from 2015 to 2016. That way we can mulitply this year's segments by the transition matrix to predict next year's segments. Then we'll multiply next year's (forecasted) segments by the same transition matrix to the get the following year. And so on.
+##### Let's assume customers will continue to transition from segment to segment in the same proportions as from 2015 to 2016. That way we can mulitply this year's segments by the transition matrix to predict next year's segments. Then we'll multiply next year's (forecasted) segments by the same transition matrix to the get the following year. And so on.
 &nbsp;
 
 
 
-```
-## 
-## 
-## |              |  2016|     2017|       2018|       2019|       2020|       2021|
-## |:-------------|-----:|--------:|----------:|----------:|----------:|----------:|
-## |active new    | 18621|     0.00|     0.0000|     0.0000|     0.0000|     0.0000|
-## |active high   |  1719|  1970.07|  1910.9352|  1796.6880|  1713.0461|  1671.4594|
-## |active med    |  4420|  6257.98|  4362.2784|  3680.0317|  3464.2545|  3394.6546|
-## |active low    |   538|  1266.04|   659.6924|   621.1322|   612.1353|   604.7566|
-## |inactive high |  2008|  2394.55|  2829.1636|  3205.1475|  3509.5913|  3759.0333|
-## |inactive med  | 29617| 35257.19| 37249.1185| 38004.0296| 38311.8471| 38474.8074|
-## |inactive low  | 48892| 58373.00| 58155.0700| 57486.7379| 56802.8523| 56125.8968|
-```
+|              |  2016|  2017|  2018|  2019|  2020|  2021|  2022|  2023|  2024|  2025|  2026|
+|:-------------|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|
+|active new    | 18621|     0|     0|     0|     0|     0|     0|     0|     0|     0|     0|
+|active high   |  1719|  1970|  1911|  1797|  1713|  1671|  1662|  1673|  1697|  1729|  1765|
+|active med    |  4420|  6258|  4362|  3680|  3464|  3395|  3370|  3358|  3349|  3341|  3334|
+|active low    |   538|  1266|   660|   621|   612|   605|   598|   590|   583|   576|   570|
+|inactive high |  2008|  2395|  2830|  3206|  3510|  3759|  3972|  4163|  4340|  4509|  4674|
+|inactive med  | 29617| 35257| 37249| 38004| 38312| 38475| 38588| 38681| 38762| 38833| 38896|
+|inactive low  | 48892| 58373| 58155| 57487| 56803| 56126| 55457| 54796| 54143| 53497| 52859|
 
 ***
 
@@ -205,34 +194,11 @@ Segment        | Recency                | LTD Revenue
 
 ![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
 
-#### Total net present value of the data base in 2020 is:
+#### Total net present value of the data base in 2026 is:
 
-```
-## 
-## 
-## |                  |X2020     |
-## |:-----------------|:---------|
-## |Net Present Value |6,069,183 |
-```
-
-### And let's add the Customer Life Time Value
-
-|     |Customer Life Time Value |Total Net Present Value of Data Base |
-|:----|:------------------------|:------------------------------------|
-|2021 |57.36                    |6,069,183                            |
-
-```
-##                        2020
-## Net Present Value 6,069,183
-```
-
-```
-## 
-## 
-## |                  |X2020     |
-## |:-----------------|:---------|
-## |Net Present Value |6,069,183 |
-```
+|Total Data Base |Per Customer |
+|:---------------|:------------|
+|11,880,106      |112.3        |
 
 
 
