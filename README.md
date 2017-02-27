@@ -11,6 +11,8 @@ https://github.com/steffenhartleib/customer_seg/blob/master/CustomerLifetTimeVal
 
 And the US only version here:
 
+https://github.com/steffenhartleib/customer_seg/blob/master/CustomerLifetTimeValue_US.md
+
 
  
 
