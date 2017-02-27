@@ -10,7 +10,6 @@ View the all-orders version here:
 https://github.com/steffenhartleib/customer_seg/blob/master/CustomerLifetTimeValue.md
 
 And the US only version here:
-
 https://github.com/steffenhartleib/customer_seg/blob/master/CustomerLifetTimeValue_US.md
 
 
