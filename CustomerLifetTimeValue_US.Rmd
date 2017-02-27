@@ -1,5 +1,5 @@
 ---
-title: 'Customer Segmentation and Valuation of Customer Data Base '
+title: 'Customer Segmentation and Valuation of Customer Data Base - US ONLY '
 author: "Steffen Hartleib"
 date: '2017-02-22'
 output:
@@ -15,7 +15,7 @@ Online purchase data for a flash deal website from 2010 to 2017
 
 ### Questions
 1. Which customer segments are driving revenue? 
-2. What is the value of the customer data base?
+2. What is the value of the US customer data base?
 
 ***
 
@@ -171,7 +171,6 @@ kable(data.frame(summary_table))
 
 ```
 
-=> Look at LTD Revenue! The mean is over three times the median. And one customer spent over $222k. Clearly a few high rolers are skewing the mean. 
 &nbsp;
 
 ***
@@ -239,7 +238,6 @@ segments_365_tbl <- segments_365%>%
 print(kable(data.frame(segments_365_tbl)))
 ```
 
-=> A perfect 80/20: In 2016 80% of revenue came from exactly 20% of customers (New Active +  Active High).  52% of revenue came from just 6% of customers (Active High + Active Medium).  And 32% of revenue came from the top 2% of customers (Active High). This site has some seriously loyal high rollers. Great!
 
 
 ```{r, echo = FALSE,eval=TRUE, message=FALSE ,warning = FALSE}
@@ -428,7 +426,7 @@ This isn't the same as Customer Life Time Value (LTV). LTV tells us how much a c
 ***
 
 ###  Let's create a Transition Matrix
-It shows the probabilities of customers changing segments between 2015 and 2016, e.g. how what "Active High" customers in 2015 were also Active High customers in 2016? etc. (the answer is 67%, not bad!)
+It shows the probabilities of customers changing segments between 2015 and 2016, e.g. how what "Active High" customers in 2015 were also "Active High"" customers in 2016? etc. (the answer is 75%, not bad!)
 
 ```{r  eval=TRUE, echo=FALSE, message=FALSE, results= "asis"}
 
@@ -457,7 +455,7 @@ ggplot(new_active_trans, aes(Var2, perc)) + geom_bar(stat ='identity') +
 
 ```
 
-=> 22% of 2015 New Active customers were still Active in 2016. Most of them are in the Active Medium segment. Curious to see what next year will look like...
+
 &nbsp;
 
 ***

@@ -1,4 +1,4 @@
-# Customer Segmentation and Valuation of Customer Data Base 
+# Customer Segmentation and Valuation of Customer Data Base - US ONLY 
 Steffen Hartleib  
 2017-02-22  
 
@@ -9,7 +9,7 @@ Online purchase data for a flash deal website from 2010 to 2017
 
 ### Questions
 1. Which customer segments are driving revenue? 
-2. What is the value of the customer data base?
+2. What is the value of the US customer data base?
 
 ***
 
@@ -20,7 +20,7 @@ Online purchase data for a flash deal website from 2010 to 2017
 ## [1] TRUE
 ```
 
-![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-2-1.png)<!-- -->![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-2-2.png)<!-- -->![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-2-3.png)<!-- -->![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-2-4.png)<!-- -->![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-2-5.png)<!-- -->
+![](CustomerLifetTimeValue_US_files/figure-html/unnamed-chunk-2-1.png)<!-- -->![](CustomerLifetTimeValue_US_files/figure-html/unnamed-chunk-2-2.png)<!-- -->![](CustomerLifetTimeValue_US_files/figure-html/unnamed-chunk-2-3.png)<!-- -->![](CustomerLifetTimeValue_US_files/figure-html/unnamed-chunk-2-4.png)<!-- -->![](CustomerLifetTimeValue_US_files/figure-html/unnamed-chunk-2-5.png)<!-- -->
 
 
 =>  In 2016 the number of customers increased significantly. But Total Revenue rose only slightly. That's because customers placed fewer orders and spent less per order. This is pattern is typical for customer acquistion campaigns driven by discounts. The challenge will be to convert these new customers from bargain shoppers to valuable long term customers.
@@ -48,7 +48,6 @@ We need to calculate three variables per customer:
 |Median  |964     |60          |1               |
 |Max     |2,292   |193,857     |1,378           |
 
-=> Look at LTD Revenue! The mean is over three times the median. And one customer spent over $222k. Clearly a few high rolers are skewing the mean. 
 &nbsp;
 
 ***
@@ -85,7 +84,6 @@ Segment        | Recency                | LTD Revenue
 |inactive med  |14,726    |            0.21|3,693,935 |0           |                0.00|
 |inactive low  |31,298    |            0.46|1,429,772 |0           |                0.00|
 
-=> A perfect 80/20: In 2016 80% of revenue came from exactly 20% of customers (New Active +  Active High).  52% of revenue came from just 6% of customers (Active High + Active Medium).  And 32% of revenue came from the top 2% of customers (Active High). This site has some seriously loyal high rollers. Great!
 
 
 
@@ -99,7 +97,7 @@ Segment        | Recency                | LTD Revenue
 
 
 
-![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+![](CustomerLifetTimeValue_US_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
 => Active New customers more than doubled last year. Active High/Med/Low segments stayed almost flat. So customer acquisition efforts are paying off and customer retention is working. The challenge will be to retain these new active 
 &nbsp;
@@ -112,7 +110,7 @@ Segment        | Recency                | LTD Revenue
 
 
 
-![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+![](CustomerLifetTimeValue_US_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
 => New Active customers drove the increase in revenue. 
 
@@ -133,7 +131,7 @@ This isn't the same as Customer Life Time Value (LTV). LTV tells us how much a c
 ***
 
 ###  Let's create a Transition Matrix
-It shows the probabilities of customers changing segments between 2015 and 2016, e.g. how what "Active High" customers in 2015 were also Active High customers in 2016? etc. (the answer is 67%, not bad!)
+It shows the probabilities of customers changing segments between 2015 and 2016, e.g. how what "Active High" customers in 2015 were also "Active High"" customers in 2016? etc. (the answer is 75%, not bad!)
 
 
 |Var1          | active new| active high| active med| active low| inactive high| inactive med| inactive low|
@@ -151,9 +149,9 @@ It shows the probabilities of customers changing segments between 2015 and 2016,
 
 ### Let's quickly visualize where last year's New Active customers ended up this year:
 
-![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+![](CustomerLifetTimeValue_US_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 
-=> 22% of 2015 New Active customers were still Active in 2016. Most of them are in the Active Medium segment. Curious to see what next year will look like...
+
 &nbsp;
 
 ***
@@ -186,11 +184,11 @@ Let's assume customers will continue to transition from segment to segment in th
 
 ***
 
-![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
+![](CustomerLifetTimeValue_US_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
 
 ***
 
-![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+![](CustomerLifetTimeValue_US_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
 
 ***
 
@@ -198,7 +196,7 @@ Let's assume customers will continue to transition from segment to segment in th
 
 
 
-![](CustomerLifetTimeValue_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
+![](CustomerLifetTimeValue_US_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
 
 ### Total net present value of the data base in 2026 is:
 
